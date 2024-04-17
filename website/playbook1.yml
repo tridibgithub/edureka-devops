@@ -5,7 +5,7 @@
   tasks:
   - name: install apache
     yum: name=apache state=present
-  - name: start httpd
+  - name: start apache
     service: name=apache state=started
   - name: deploy html file
     copy: src=. dest=/var/www/html
