@@ -1,4 +1,5 @@
-- hosts: webserver
+---
+- hosts: webservers
   become: true
   become_user: root
   tasks:
@@ -6,11 +7,9 @@
     yum: name=httpd state=present
   - name: start httpd
     service: name=httpd state=started
-  - name: deploy php file
-    service: src=website/index.php dest=/var/www/html
+  - name: deploy html file
+    copy: src=website/index.html dest=/var/www/html
     notify: restart httpd
   handlers:
   - name: restart httpd
-    service: name=httpd state=started
-      
-  
+    service: name=httpd state=restarted
