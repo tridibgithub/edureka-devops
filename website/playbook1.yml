@@ -1,16 +1,16 @@
 - hosts: webserver
   become: true
   become_user: root
-  - tasks:
-    - name: install httpd
-      yum: name=httpd state=present
-    - name: start httpd
-      service: name=httpd state=started
-    - name: deploy php file
-      service: src=website/index.php dest=/var/www/html
-      notify: restart httpd
-    handlers:
-    - name: restart httpd
-      service: name=httpd state=started
+  tasks:
+  - name: install httpd
+    yum: name=httpd state=present
+  - name: start httpd
+    service: name=httpd state=started
+  - name: deploy php file
+    service: src=website/index.php dest=/var/www/html
+    notify: restart httpd
+  handlers:
+  - name: restart httpd
+    service: name=httpd state=started
       
   
