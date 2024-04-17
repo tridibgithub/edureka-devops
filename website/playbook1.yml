@@ -8,7 +8,7 @@
   - name: start httpd
     service: name=httpd state=started
   - name: deploy html file
-    copy: src=/index.php dest=/var/www/html
+    copy: src=index.php dest=/var/www/html
     notify: restart httpd
   handlers:
   - name: restart httpd
