@@ -3,13 +3,13 @@
   become: true
   become_user: root
   tasks:
-  - name: install apache2
-    yum: name=apache2 state=present
+  - name: install apache
+    yum: name=apache state=present
   - name: start httpd
-    service: name=apache2 state=started
+    service: name=apache state=started
   - name: deploy html file
     copy: src=. dest=/var/www/html
-    notify: restart apache2
+    notify: restart apache
   handlers:
-  - name: restart apache2
+  - name: restart apache
     service: name=apache2 state=restarted
