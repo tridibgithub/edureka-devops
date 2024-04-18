@@ -1,0 +1,18 @@
+pipeline{
+    agent any
+    stages{
+        stage('SCM checkout')
+        {
+          
+            steps{
+                git 'https://github.com/Saad4509/projCert.git'
+            }
+        }
+        stage('Ansible playbook')
+        {
+            steps{
+               ansiblePlaybook credentialsId: 'ansibleID', disableHostKeyChecking: true, installation: 'myansible', inventory: 'dev.inv', playbook: 'playbook1.yml', vaultTmpPath: ''
+            }
+        }
+    }
+}
