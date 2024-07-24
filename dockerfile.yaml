@@ -1,0 +1,9 @@
+FROM devopsedu/webapp
+
+# Set the working directory to /var/www/html
+ADD website /var/www/html
+
+RUN rn /var/www/html/index.html
+
+# Start Apache server
+CMD ["apache2ctl", "-D", "FOREGROUND"]
