@@ -1,18 +1,16 @@
-- name: Install Docker if not installed
-  hosts: localhost
+---
+- hosts: testserver
   become: yes
   tasks:
-    - name: Update apt repo
-      apt:
-        update_cache: yes
-
     - name: Install Docker
       apt:
         name: docker.io
         state: present
+        update_cache: yes
 
-    - name: Start Docker
+    - name: Ensure Docker is running
       service:
         name: docker
         state: started
         enabled: yes
+
