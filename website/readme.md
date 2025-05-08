@@ -6,7 +6,7 @@ This project is meant for absolute beginners. I've intentionally kept it the mos
 
 ## Concepts
 
-The project covers these concepts:
+The project covers the concepts below:
 
  * PHP variables
  * PHP arrays
