@@ -1,0 +1,14 @@
+- name: Install Docker on Ubuntu
+  hosts: all
+  become: yes
+  tasks:
+
+    - name: Install dependencies
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
