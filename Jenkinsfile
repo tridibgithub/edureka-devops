@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        TEST_SERVER = 'ubuntu@192.168.1.10'
-        REPO_URL = 'https://github.com/your-username/projCert.git'
+        TEST_SERVER = 'edureka@172.31.11.34'
+        REPO_URL = 'https://github.com/anjali-kumari-ops/projCert.git'
     }
 
     stages {
