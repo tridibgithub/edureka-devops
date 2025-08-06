@@ -36,19 +36,20 @@ ENDSSH
                     try {
                         sshagent(['test-server-ssh']) {
                             sh """
-                            ssh -o StrictHostKeyChecking=no \$TEST_SERVER 'bash -s' <<'ENDSSH'
-                                if [ ! -d /tmp/projCert ]; then
-                                    git clone \$REPO_URL /tmp/projCert
-                                else
-                                    cd /tmp/projCert && git pull
-                                fi
+                            ssh -o StrictHostKeyChecking=no "$TEST_SERVER" <<EOF
+                            if [ ! -d /tmp/projCert ]; then
+                                git clone $REPO_URL /tmp/projCert
+                            else
+                                cd /tmp/projCert && git pull
+                            fi
 
-                                cd /tmp/projCert
-                                docker build -t php-webapp .
-                                docker stop php-webapp || true
-                                docker rm php-webapp || true
-                                docker run -d --name php-webapp -p 80:80 php-webapp
-ENDSSH
+                            cd /tmp/projCert
+
+                            sudo docker build -t php-webapp .
+                            sudo docker stop php-webapp || true
+                            sudo docker rm php-webapp || true
+                            sudo docker run -d --name php-webapp -p 80:80 php-webapp
+                        EOF
                             """
                         }
                     } catch (err) {
