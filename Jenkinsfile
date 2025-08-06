@@ -11,11 +11,11 @@ pipeline {
             steps {
                 sshagent(['test-server-ssh']) {
                     sh """
-                    ssh -o StrictHostKeyChecking=no \$TEST_SERVER 'bash -s' <<'ENDSSH'
-                        wget https://apt.puppet.com/puppet6-release-bionic.deb
-                        sudo dpkg -i puppet6-release-bionic.deb
-                        sudo apt update
-                        sudo apt install puppet-agent -y
+ssh -o StrictHostKeyChecking=no \$TEST_SERVER 'bash -s' <<'ENDSSH'
+wget https://apt.puppet.com/puppet6-release-bionic.deb
+sudo dpkg -i puppet6-release-bionic.deb
+sudo apt update
+sudo apt install puppet-agent -y
 ENDSSH
                     """
                 }
@@ -25,7 +25,7 @@ ENDSSH
         stage('Job 2: Install Docker via Ansible') {
             steps {
                 sh '''
-                ansible-playbook ansible/install_docker.yml -i ansible/inventory
+ansible-playbook ansible/install_docker.yml -i ansible/inventory
                 '''
             }
         }
@@ -36,45 +36,45 @@ ENDSSH
                     try {
                         sshagent(['test-server-ssh']) {
                             sh """
-                            ssh -o StrictHostKeyChecking=no "$TEST_SERVER" <<'EOF'
-                            set -e
+ssh -o StrictHostKeyChecking=no "\$TEST_SERVER" <<'EOF'
+set -e
 
-                            if [ ! -d /tmp/projCert ]; then
-                                git clone $REPO_URL /tmp/projCert
-                            else
-                                cd /tmp/projCert && git pull
-                            fi
+if [ ! -d /tmp/projCert ]; then
+    git clone \$REPO_URL /tmp/projCert
+else
+    cd /tmp/projCert && git pull
+fi
 
-                            cd /tmp/projCert
+cd /tmp/projCert
 
-                            # Rename DockerFile to Dockerfile if needed
-                            if [ -f DockerFile ]; then
-                                mv DockerFile Dockerfile
-                            fi
+# Rename DockerFile to Dockerfile if needed
+if [ -f DockerFile ]; then
+    mv DockerFile Dockerfile
+fi
 
-                            echo "🛠️ Building Docker image..."
-                            sudo docker build -t php-webapp .
+echo "🛠️ Building Docker image..."
+sudo docker build -t php-webapp .
 
-                            echo "📦 Checking available Docker images:"
-                            sudo docker images | grep php-webapp
+echo "📦 Checking available Docker images:"
+sudo docker images | grep php-webapp
 
-                            echo "🧹 Cleaning up old container (if any)..."
-                            sudo docker stop php-webapp || true
-                            sudo docker rm php-webapp || true
+echo "🧹 Cleaning up old container (if any)..."
+sudo docker stop php-webapp || true
+sudo docker rm php-webapp || true
 
-                            echo "🚀 Running new container..."
-                            sudo docker run -d --name php-webapp -p 80:80 php-webapp
-                            EOF
+echo "🚀 Running new container..."
+sudo docker run -d --name php-webapp -p 80:80 php-webapp
+EOF
                             """
                         }
                     } catch (err) {
                         echo "❌ Deployment failed — cleaning up container..."
                         sshagent(['test-server-ssh']) {
                             sh """
-                            ssh -o StrictHostKeyChecking=no \$TEST_SERVER 'bash -s' <<'ENDSSH'
-                            sudo docker stop php-webapp || true
-                            sudo docker rm php-webapp || true
-                            ENDSSH
+ssh -o StrictHostKeyChecking=no \$TEST_SERVER 'bash -s' <<'ENDSSH'
+sudo docker stop php-webapp || true
+sudo docker rm php-webapp || true
+ENDSSH
                             """
                         }
                         error("Job 3 failed and container deleted.")
