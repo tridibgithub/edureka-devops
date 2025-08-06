@@ -36,30 +36,45 @@ ENDSSH
                     try {
                         sshagent(['test-server-ssh']) {
                             sh """
-                            ssh -o StrictHostKeyChecking=no "$TEST_SERVER" <<EOF
-                            if [ ! -d /tmp/projCert ]; then
-                                git clone $REPO_URL /tmp/projCert
-                            else
-                                cd /tmp/projCert && git pull
-                            fi
+                            ssh -o StrictHostKeyChecking=no "$TEST_SERVER" <<'EOF'
+                                set -e
 
-                            cd /tmp/projCert
+                                if [ ! -d /tmp/projCert ]; then
+                                    git clone $REPO_URL /tmp/projCert
+                                else
+                                    cd /tmp/projCert && git pull
+                                fi
 
-                            sudo docker build -t php-webapp .
-                            sudo docker stop php-webapp || true
-                            sudo docker rm php-webapp || true
-                            sudo docker run -d --name php-webapp -p 80:80 php-webapp
-                        EOF
+                                cd /tmp/projCert
+
+                                # Rename DockerFile to Dockerfile if needed
+                                if [ -f DockerFile ]; then
+                                    mv DockerFile Dockerfile
+                                fi
+
+                                echo "🛠️ Building Docker image..."
+                                sudo docker build -t php-webapp .
+
+                                echo "📦 Checking available Docker images:"
+                                sudo docker images | grep php-webapp
+
+                                echo "🧹 Cleaning up old container (if any)..."
+                                sudo docker stop php-webapp || true
+                                sudo docker rm php-webapp || true
+
+                                echo "🚀 Running new container..."
+                                sudo docker run -d --name php-webapp -p 80:80 php-webapp
+                            EOF
                             """
                         }
                     } catch (err) {
-                        echo "Deployment failed — cleaning up container..."
+                        echo "❌ Deployment failed — cleaning up container..."
                         sshagent(['test-server-ssh']) {
                             sh """
                             ssh -o StrictHostKeyChecking=no \$TEST_SERVER 'bash -s' <<'ENDSSH'
-                                docker stop php-webapp || true
-                                docker rm php-webapp || true
-ENDSSH
+                                sudo docker stop php-webapp || true
+                                sudo docker rm php-webapp || true
+        ENDSSH
                             """
                         }
                         error("Job 3 failed and container deleted.")
