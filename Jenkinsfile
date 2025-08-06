@@ -10,14 +10,14 @@ pipeline {
         stage('Job 1: Install Puppet Agent') {
             steps {
                 sshagent(['test-server-ssh']) {
-                    sh '''
-                    ssh -o StrictHostKeyChecking=no $TEST_SERVER << EOF
+                    sh """
+                    ssh -o StrictHostKeyChecking=no \$TEST_SERVER 'bash -s' <<'ENDSSH'
                         wget https://apt.puppet.com/puppet6-release-bionic.deb
                         sudo dpkg -i puppet6-release-bionic.deb
                         sudo apt update
                         sudo apt install puppet-agent -y
-                    EOF
-                    '''
+ENDSSH
+                    """
                 }
             }
         }
@@ -35,10 +35,10 @@ pipeline {
                 script {
                     try {
                         sshagent(['test-server-ssh']) {
-                            sh '''
-                            ssh -o StrictHostKeyChecking=no $TEST_SERVER << EOF
+                            sh """
+                            ssh -o StrictHostKeyChecking=no \$TEST_SERVER 'bash -s' <<'ENDSSH'
                                 if [ ! -d /tmp/projCert ]; then
-                                    git clone $REPO_URL /tmp/projCert
+                                    git clone \$REPO_URL /tmp/projCert
                                 else
                                     cd /tmp/projCert && git pull
                                 fi
@@ -48,18 +48,18 @@ pipeline {
                                 docker stop php-webapp || true
                                 docker rm php-webapp || true
                                 docker run -d --name php-webapp -p 80:80 php-webapp
-                            EOF
-                            '''
+ENDSSH
+                            """
                         }
                     } catch (err) {
                         echo "Deployment failed — cleaning up container..."
                         sshagent(['test-server-ssh']) {
-                            sh '''
-                            ssh -o StrictHostKeyChecking=no $TEST_SERVER << EOF
+                            sh """
+                            ssh -o StrictHostKeyChecking=no \$TEST_SERVER 'bash -s' <<'ENDSSH'
                                 docker stop php-webapp || true
                                 docker rm php-webapp || true
-                            EOF
-                            '''
+ENDSSH
+                            """
                         }
                         error("Job 3 failed and container deleted.")
                     }
