@@ -36,11 +36,11 @@ ansible-playbook ansible/install_docker.yml -i ansible/inventory
                     try {
                         sshagent(['test-server-ssh']) {
                             sh """
-ssh -o StrictHostKeyChecking=no "\$TEST_SERVER" <<'EOF'
+ssh -o StrictHostKeyChecking=no "$TEST_SERVER" <<'EOF'
 set -e
 
 if [ ! -d /home/edureka/projCert ]; then
-    git clone \$REPO_URL /home/edureka/projCert
+    git clone $REPO_URL /home/edureka/projCert
 else
     cd /home/edureka/projCert && git pull
 fi
