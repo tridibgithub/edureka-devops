@@ -39,7 +39,7 @@ ansible-playbook ansible/install_docker.yml -i ansible/inventory
 ssh -o StrictHostKeyChecking=no "\$TEST_SERVER" <<'EOF'
 set -e
 
-if [ ! -d /tmp/projCert ]; then
+if [ ! -d /home/edureka/projCert ]; then
     git clone \$REPO_URL /home/edureka/projCert
 else
     cd /home/edureka/projCert && git pull
