@@ -40,12 +40,12 @@ ssh -o StrictHostKeyChecking=no "\$TEST_SERVER" <<'EOF'
 set -e
 
 if [ ! -d /tmp/projCert ]; then
-    git clone \$REPO_URL /tmp/projCert
+    git clone \$REPO_URL /home/edureka/projCert
 else
-    cd /tmp/projCert && git pull
+    cd /home/edureka/projCert && git pull
 fi
 
-cd /tmp/projCert
+cd /home/edureka/projCert
 
 # Rename DockerFile to Dockerfile if needed
 if [ -f DockerFile ]; then
