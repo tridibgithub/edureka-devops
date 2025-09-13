@@ -1,1 +1,2 @@
-This is a PHP project for my assignment for Edureca certification project
+This is a PHP project for my assignment for Edureca certification project.
+
